@@ -10,6 +10,7 @@ TODO:
     SEMI-DONE - decide if the game has been won or lost by checking whether the player has
     guessed correctly within the allotted number of guesses.
     test whether the player has guessed the whole phrase or not
+    testing visual studio code
 
 
 phrases?
