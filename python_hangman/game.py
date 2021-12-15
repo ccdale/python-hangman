@@ -7,9 +7,9 @@ TODO:
     DONE - detect whether the guess is correct or not
     DONE - count the number of guesses and correct guesses
     DONE - display to the user the number of guesses so far and the total number of guesses allowed
-    SEMI-DONE - decide if the game has been won or lost by checking whether the player has
+    DONE - decide if the game has been won or lost by checking whether the player has
     guessed correctly within the allotted number of guesses.
-    test whether the player has guessed the whole phrase or not
+    DONE - test whether the player has guessed the whole phrase or not
     testing visual studio code
 
 
@@ -37,6 +37,7 @@ def generatePhrase():
 
 def hangmanHint(phrase, guesses):
     ret = "\n "
+    underscores = 0
     for letter in phrase:
         if letter == " ":
             op = "  "
@@ -45,22 +46,25 @@ def hangmanHint(phrase, guesses):
                 op = f"{letter.upper()} "
             else:
                 op = "_ "
+                underscores += 1
         ret += op
-    return ret
+    return ret, underscores
 
-def askMe():
+def askMe(phrase):
     ok = False
     while not ok:
         inp = input("guess a letter: ").lower()
 
-        # TODO
-        # detect whether the player typed a single letter or a phrase
-        # TODO
-
-        for letter in range(ord("a"), ord("z")+1):
-            if inp == chr(letter):
-                ok = True
-                break
+        if len(inp) == 1:
+            for letter in range(ord("a"), ord("z")+1):
+                if inp == chr(letter):
+                    ok = True
+                    break
+        elif len(inp) > 1:
+            if inp == phrase:
+                return True
+        else:
+            pass
     return inp
 
 def testGuess(guess, phrase):
@@ -75,17 +79,28 @@ def hangman():
     totalallowed = 10
     phrase = generatePhrase()
     guesses = []
+    wongame = False
     while numberofincorrectguesses < totalallowed:
-        guess = askMe()
-        if testGuess(guess, phrase):
+        guess = askMe(phrase)
+        if type(guess) != str:
+            if guess == True:
+                wongame = True
+                break
+        elif testGuess(guess, phrase):
             guesses.append(guess)
+            print(guesses)
         else:
             numberofincorrectguesses += 1
-        hint = hangmanHint(phrase, guesses)
+        hint, underscores = hangmanHint(phrase, guesses)
+        if underscores == 0:
+            wongame = True
+            break
         print(f"{hint}\n{numberofincorrectguesses}/{totalallowed}")
 
-    if numberofincorrectguesses >= totalallowed:
-        print(f"game over, {numberofincorrectguesses}/{totalallowed}\n{phrase}")
+    # if numberofincorrectguesses >= totalallowed:
+    print(f"game over, {numberofincorrectguesses}/{totalallowed}\n{phrase}\n")
+    msg = "game won" if wongame else "game lost"
+    print(msg)
     return True
 
 
